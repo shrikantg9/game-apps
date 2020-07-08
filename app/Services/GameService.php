@@ -1,34 +1,30 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
 use Illuminate\Http\Request;
 
-class GameController extends Controller
+class GameService
 {
     /**
      * Return string Win Or Lose .
-     * @param teamA drain $teamA string
-     * @param teamB drain $teamB string
+     * @param $teamArr array
+     *
      * @return string
      */
-    public function gameProcess(string $teamA, string $teamB):string
+    public function gameProcess(array $teamArr):string
     {
-        $data = array(
-                'team_a' => $teamA,
-                'team_b' => $teamB
-            );
         $rules = array(
                 'team_a' => 'required|regex:/^[0-9,]+$/',
                 'team_b'  => 'required|regex:/^[0-9,]+$/',
             );
-        $validator = \Validator::make($data, $rules);
+        $validator = \Validator::make($teamArr, $rules);
         if ($validator->fails()) {
             return $validator->messages();
         }
         try {
-            $teamAArr = explode(',', $teamA);
-            $teamBArr = explode(',', $teamB);
+            $teamAArr = explode(',', $teamArr['team_a']);
+            $teamBArr = explode(',', $teamArr['team_b']);
             $len = count($teamAArr);
             if ($this->checkGameResult($teamAArr, $teamBArr, $len)) {
                 return "Win";
